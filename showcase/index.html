@@ -344,22 +344,40 @@
                     setMainImage(resolveUrl(defaultImg.url), defaultType);
                 }
 
-                const levels = ["90", "50", "20"];
-                statsEl.innerHTML = levels
-                    .map((lvl) => {
-                        const stat = charData.statsByLevel?.[lvl];
-                        if (!stat) return "";
+                const statsByLevel = charData.statsByLevel ?? null;
+                const availableLevels = statsByLevel ? Object.keys(statsByLevel) : [];
 
-                        return `
-                            <div class="stat-box">
-                                <div class="stat-lvl">Lv. ${escapeHtml(lvl)}</div>
-                                <div class="stat-row"><span>HP</span> <b>${escapeHtml(stat.hp)}</b></div>
-                                <div class="stat-row"><span>ATK</span> <b>${escapeHtml(stat.atk)}</b></div>
-                                <div class="stat-row"><span>DEF</span> <b>${escapeHtml(stat.def)}</b></div>
-                            </div>
-                        `;
-                    })
-                    .join("");
+                const preferredOrder = ["90", "50", "20"];
+                const levels = [
+                    ...preferredOrder.filter((lvl) => availableLevels.includes(lvl)),
+                    ...availableLevels
+                        .filter((lvl) => !preferredOrder.includes(lvl))
+                        .sort((a, b) => Number(b) - Number(a)),
+                ];
+
+                if (levels.length === 0) {
+                    statsEl.innerHTML = `
+                        <div style="color:var(--text-tertiary); font-size:12px">
+                            Base stats are not available for this character yet.
+                        </div>
+                    `;
+                } else {
+                    statsEl.innerHTML = levels
+                        .map((lvl) => {
+                            const stat = statsByLevel?.[lvl];
+                            if (!stat) return "";
+
+                            return `
+                                <div class="stat-box">
+                                    <div class="stat-lvl">Lv. ${escapeHtml(lvl)}</div>
+                                    <div class="stat-row"><span>HP</span> <b>${escapeHtml(String(stat.hp ?? ""))}</b></div>
+                                    <div class="stat-row"><span>ATK</span> <b>${escapeHtml(String(stat.atk ?? ""))}</b></div>
+                                    <div class="stat-row"><span>DEF</span> <b>${escapeHtml(String(stat.def ?? ""))}</b></div>
+                                </div>
+                            `;
+                        })
+                        .join("");
+                }
 
                 const skills = Array.isArray(charData.skills) ? charData.skills : [];
                 skillsEl.innerHTML = skills
