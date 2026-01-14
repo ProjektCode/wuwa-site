@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showcase - What you can build with WuwaAPI</title>
+    <meta name="description" content="A live demo showcasing the capabilities of WuwaAPI.">
+    <link rel="icon" href="https://wuwa.projektcode.com/v1/images/characters/augusta/icon.webp" type="image/webp" />
+    <style>
+        :root {
+            /* Theme - Crimson Palette (STYLE_GUIDE.md) + Wuthering Waves */
+            --bg-deep: #0e0c0d; /* Obsidian */
+            --bg-surface: #16131a; /* Midnight */
+            --bg-highlight: #1e1a1c; /* Dark Mauve */
+            --border-color: #2a2426; /* Warm Graphite */
+
+            --text-primary: #e8e8e8; /* White */
+            --text-secondary: #a0a0a0; /* Silver */
+            --text-tertiary: #6a6a6a; /* Gray */
+
+            --accent: #dc143c; /* Crimson */
+
+            /* Optional accents */
+            --accent-gold: #ffd700;
+
+            --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+
+            --radius: 12px;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        ul { list-style: none; }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 64px;
+            background: rgba(14, 12, 13, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; }
+        .nav-links a { color: var(--text-secondary); }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+        .nav-links a.active { position: relative; }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            padding-top: 80px;
+            padding-bottom: 60px;
+            background:
+                radial-gradient(900px 500px at 50% 120px, rgba(220, 20, 60, 0.08), transparent 78%),
+                var(--bg-deep);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to bottom, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .api-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-small:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .btn-small:focus-visible {
+            outline: 2px solid rgba(220, 20, 60, 0.65);
+            outline-offset: 2px;
+        }
+
+        .btn-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(220, 20, 60, 0.12);
+            flex: 0 0 auto;
+        }
+
+        .status-panel {
+            padding: 40px;
+            text-align: center;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-secondary);
+        }
+
+        .error-panel {
+            border-color: rgba(220, 20, 60, 0.55);
+            background: rgba(220, 20, 60, 0.06);
+            color: #fca5a5;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (min-width: 900px) {
+            .app-grid {
+                grid-template-columns: 420px 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-hero {
+            padding: 18px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.08), rgba(255, 255, 255, 0.01));
+        }
+
+        .card-hero .title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .name-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .attr-icon {
+            width: 24px;
+            height: 24px;
+            flex: 0 0 auto;
+            filter: drop-shadow(0 0 8px rgba(220, 20, 60, 0.4));
+        }
+
+        .card-hero h2 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .id-badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .pill-row {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.28);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .pill strong {
+            color: var(--text-primary);
+            font-weight: 800;
+            margin-right: 4px;
+        }
+
+        .pill.gold strong { color: var(--accent-gold); }
+
+        .main-image-box {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.2);
+            display: grid;
+            place-items: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .main-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .main-image-box.contain img {
+            object-fit: contain;
+            padding: 20px;
+        }
+
+        .thumb-bar {
+            display: flex;
+            gap: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .thumb-bar::-webkit-scrollbar { height: 4px; }
+        .thumb-bar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+        .thumb {
+            flex: 0 0 auto;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .thumb:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+        }
+
+        .thumb.active {
+            border-color: var(--accent);
+            background: rgba(220, 20, 60, 0.1);
+            color: var(--text-primary);
+        }
+
+        .section { padding: 18px; }
+
+        .section h3 {
+            margin: 0 0 12px;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .stat-box {
+            border: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-lvl {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 800;
+            font-family: var(--font-mono);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 4px;
+        }
+
+        .stat-row span { color: var(--text-secondary); }
+        .stat-row b { color: var(--text-primary); }
+
+        .skill-item {
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        .skill-item:hover { background: rgba(255, 255, 255, 0.04); }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            cursor: pointer;
+            gap: 12px;
+        }
+
+        .skill-header:focus-visible {
+            outline: 2px solid rgba(220, 20, 60, 0.6);
+            outline-offset: -2px;
+        }
+
+        .skill-header h4 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 700;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .skill-type {
+            font-size: 10px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .skill-chevron {
+            width: 16px;
+            height: 16px;
+            color: var(--text-tertiary);
+            transition: transform 0.2s;
+            flex: 0 0 auto;
+        }
+
+        .skill-item.open .skill-chevron { transform: rotate(180deg); color: var(--accent); }
+        .skill-item.open { border-color: rgba(220, 20, 60, 0.3); }
+
+        .skill-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .skill-item.open .skill-body {
+            max-height: 2000px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .skill-content {
+            padding: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .skill-content strong { color: var(--text-primary); }
+
+        .md-table-wrap {
+            overflow-x: auto;
+            margin-top: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background: rgba(255,255,255,0.05); color: var(--text-primary); white-space: nowrap; }
+        td { color: var(--text-secondary); }
+
+        footer {
+            margin-top: auto;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            background: var(--bg-deep);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a:hover { color: var(--accent); text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .page-header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="../" class="logo">Wuwa<span>API</span></a>
+            <div class="nav-links">
+                <a href="../docs/">Documentation</a>
+                <a href="./" class="active">Showcase</a>
+                <a href="https://wuwa.projektcode.com/docs" target="_blank" rel="noopener noreferrer">Swagger</a>
+                <a href="https://github.com/ProjektCode/wuwa-api" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="page-header">
+                <h1>What you can build with WuwaAPI</h1>
+                <p>A live example fetching real-time data from the API.</p>
+            </div>
+
+            <div class="api-tools">
+                <button class="btn-small" id="copyBtn" type="button">
+                    <span class="btn-icon" aria-hidden="true"></span>
+                    Copy curl
+                </button>
+                <a href="https://wuwa.projektcode.com/docs" target="_blank" rel="noopener noreferrer" class="btn-small">
+                    <span class="btn-icon" aria-hidden="true"></span>
+                    Open Swagger
+                </a>
+            </div>
+
+            <div id="status" class="status-panel">
+                Initializing linkage to Solaris-3...
+            </div>
+
+            <div id="app" class="app-grid" style="display: none;">
+                <div class="left-col">
+                    <div class="card">
+                        <div class="card-hero">
+                            <div class="title-row">
+                                <div class="name-group">
+                                    <h2 id="charName">Character</h2>
+                                    <img id="attrIcon" class="attr-icon" alt="Element" style="display:none">
+                                </div>
+                                <div class="id-badge" id="charId">ID: --</div>
+                            </div>
+                            <div class="pill-row" id="pills"></div>
+                        </div>
+
+                        <div class="main-image-box" id="mainImgBox">
+                            <img id="mainImg" alt="Character Image">
+                        </div>
+
+                        <div class="thumb-bar" id="imgThumbs"></div>
+
+                        <div class="section">
+                            <h3>Base Stats</h3>
+                            <div class="stats-grid" id="statsGrid"></div>
+                            <div style="margin-top:10px; font-size:10px; color:var(--text-tertiary); text-align:right">
+                                Source: Fandom Wiki
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="card">
+                        <div class="section">
+                            <h3>Resonance Skills</h3>
+                            <div id="skillsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="../docs/">Docs</a>
+                <a href="./">Showcase</a>
+                <a href="https://wuwa.projektcode.com/docs" target="_blank" rel="noopener noreferrer">Swagger</a>
+                <a href="https://github.com/ProjektCode/wuwa-api" target="_blank" rel="noopener noreferrer">API Repo</a>
+                <a href="https://github.com/ProjektCode/wuwa-site" target="_blank" rel="noopener noreferrer">Site Repo</a>
+            </div>
+            <p>&copy; 2026 WuwaAPI. Not affiliated with Kuro Games.</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = "https://wuwa.projektcode.com";
+        const CHAR_ID = "augusta";
+
+        const statusEl = document.getElementById("status");
+        const appEl = document.getElementById("app");
+        const nameEl = document.getElementById("charName");
+        const idEl = document.getElementById("charId");
+        const pillsEl = document.getElementById("pills");
+        const mainImgEl = document.getElementById("mainImg");
+        const mainImgBox = document.getElementById("mainImgBox");
+        const attrIconEl = document.getElementById("attrIcon");
+        const thumbsEl = document.getElementById("imgThumbs");
+        const statsEl = document.getElementById("statsGrid");
+        const skillsEl = document.getElementById("skillsList");
+        const copyBtn = document.getElementById("copyBtn");
+
+        const escapeHtml = (str) =>
+            String(str)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+
+        const resolveUrl = (url) => {
+            if (!url) return "";
+            return url.startsWith("/") ? API_BASE + url : url;
+        };
+
+        const renderMarkdown = (md) => {
+            if (!md) return "";
+            let html = escapeHtml(md);
+            html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+            html = html.replace(/\n/g, "<br>");
+            return html;
+        };
+
+        const renderTable = (mdText) => {
+            if (!mdText) return "";
+
+            const lines = mdText.split("\n").filter((l) => l.trim());
+            const tableLines = lines.filter((l) => l.trim().startsWith("|") && l.trim().endsWith("|"));
+            if (tableLines.length < 3) return "";
+
+            const splitRow = (line) =>
+                line
+                    .trim()
+                    .slice(1, -1)
+                    .split("|")
+                    .map((c) => c.trim());
+
+            const header = splitRow(tableLines[0]);
+            const rows = tableLines
+                .slice(2)
+                .map(splitRow)
+                .filter((r) => r.some(Boolean));
+
+            if (header.length === 0 || rows.length === 0) return "";
+
+            let html = `<div class="md-table-wrap"><table><thead><tr>`;
+            header.forEach((h) => (html += `<th>${escapeHtml(h)}</th>`));
+            html += `</tr></thead><tbody>`;
+
+            rows.forEach((row) => {
+                html += `<tr>`;
+                row.forEach((cell) => (html += `<td>${renderMarkdown(cell)}</td>`));
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            return html;
+        };
+
+        function setMainImage(url, type) {
+            mainImgEl.src = url;
+
+            const isContain = type === "card" || type === "icon" || type === "attribute";
+            mainImgBox.classList.toggle("contain", isContain);
+
+            for (const t of document.querySelectorAll(".thumb")) {
+                t.classList.toggle("active", t.dataset.type === type);
+            }
+        }
+
+        async function copyCurl() {
+            const curl = `curl "${API_BASE}/v1/characters/${CHAR_ID}"`;
+            try {
+                await navigator.clipboard.writeText(curl);
+                const original = copyBtn.textContent;
+                copyBtn.textContent = "Copied";
+                setTimeout(() => (copyBtn.textContent = original ?? "Copy curl"), 1500);
+            } catch {
+                // no-op
+            }
+        }
+
+        copyBtn.addEventListener("click", copyCurl);
+
+        async function init() {
+            try {
+                const [charRes, imgRes] = await Promise.all([
+                    fetch(`${API_BASE}/v1/characters/${CHAR_ID}`),
+                    fetch(`${API_BASE}/v1/characters/${CHAR_ID}/images`),
+                ]);
+
+                if (!charRes.ok) throw new Error(`Character request failed: ${charRes.status}`);
+                if (!imgRes.ok) throw new Error(`Images request failed: ${imgRes.status}`);
+
+                const charData = await charRes.json();
+                const imgData = await imgRes.json();
+
+                nameEl.textContent = charData.name ?? CHAR_ID;
+                idEl.textContent = `ID: ${charData.id ?? CHAR_ID}`;
+
+                const pills = [];
+                if (charData.rarity) pills.push({ label: "Rarity", value: "★".repeat(charData.rarity), cls: "gold" });
+                if (charData.element) pills.push({ label: "Element", value: charData.element });
+                if (charData.weaponType) pills.push({ label: "Weapon", value: charData.weaponType });
+
+                pillsEl.innerHTML = pills
+                    .map((p) => {
+                        const cls = p.cls ? ` ${p.cls}` : "";
+                        return `<span class="pill${cls}"><strong>${escapeHtml(p.value)}</strong> ${escapeHtml(p.label)}</span>`;
+                    })
+                    .join("");
+
+                const images = Array.isArray(imgData?.images) ? imgData.images : [];
+                const attrImg = images.find((i) => i.file === "attribute.webp");
+                if (attrImg?.url) {
+                    attrIconEl.src = resolveUrl(attrImg.url);
+                    attrIconEl.style.display = "block";
+                } else {
+                    attrIconEl.style.display = "none";
+                }
+
+                const galleryImages = images.filter((i) => i.file !== "attribute.webp");
+
+                thumbsEl.innerHTML = "";
+                for (const img of galleryImages) {
+                    const type = String(img.file ?? "").replace(".webp", "");
+
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "thumb";
+                    btn.dataset.type = type;
+                    btn.textContent = type;
+                    btn.addEventListener("click", () => setMainImage(resolveUrl(img.url), type));
+                    thumbsEl.appendChild(btn);
+                }
+
+                const defaultOrder = ["splash", "card", "icon"];
+                const pick = (t) => galleryImages.find((i) => i.file === `${t}.webp`);
+                const defaultImg = defaultOrder.map(pick).find(Boolean) ?? galleryImages[0];
+
+                if (defaultImg?.url) {
+                    const defaultType = String(defaultImg.file).replace(".webp", "");
+                    setMainImage(resolveUrl(defaultImg.url), defaultType);
+                }
+
+                const levels = ["90", "50", "20"];
+                statsEl.innerHTML = levels
+                    .map((lvl) => {
+                        const stat = charData.statsByLevel?.[lvl];
+                        if (!stat) return "";
+
+                        return `
+                            <div class="stat-box">
+                                <div class="stat-lvl">Lv. ${escapeHtml(lvl)}</div>
+                                <div class="stat-row"><span>HP</span> <b>${escapeHtml(stat.hp)}</b></div>
+                                <div class="stat-row"><span>ATK</span> <b>${escapeHtml(stat.atk)}</b></div>
+                                <div class="stat-row"><span>DEF</span> <b>${escapeHtml(stat.def)}</b></div>
+                            </div>
+                        `;
+                    })
+                    .join("");
+
+                const skills = Array.isArray(charData.skills) ? charData.skills : [];
+                skillsEl.innerHTML = skills
+                    .map((skill, index) => {
+                        const isOpen = index === 0 ? "open" : "";
+                        const type = skill.type ?? skill.category ?? "Skill";
+
+                        let scalingHtml = "";
+                        if (skill.scalingMdByRank) {
+                            const r1 = renderTable(skill.scalingMdByRank["1"]);
+                            const r10 = renderTable(skill.scalingMdByRank["10"]);
+
+                            if (r1 || r10) {
+                                scalingHtml = `
+                                    <div style="margin-top:16px">
+                                        <div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Scaling (Rank 1 / 10)</div>
+                                        ${r1 ? `<div style="margin-bottom:10px">${r1}</div>` : ""}
+                                        ${r10 ? `<div>${r10}</div>` : ""}
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        return `
+                            <div class="skill-item ${isOpen}">
+                                <div class="skill-header" role="button" tabindex="0" aria-expanded="${index === 0 ? "true" : "false"}">
+                                    <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0">
+                                        <h4>${escapeHtml(skill.name ?? "Unnamed")}</h4>
+                                        <span class="skill-type">${escapeHtml(type)}</span>
+                                    </div>
+                                    <svg class="skill-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                                </div>
+                                <div class="skill-body">
+                                    <div class="skill-content">
+                                        <p>${renderMarkdown(skill.descriptionMd)}</p>
+                                        ${scalingHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    })
+                    .join("");
+
+                for (const item of skillsEl.querySelectorAll(".skill-item")) {
+                    const header = item.querySelector(".skill-header");
+                    if (!header) continue;
+
+                    const setExpanded = (open) => {
+                        item.classList.toggle("open", open);
+                        header.setAttribute("aria-expanded", open ? "true" : "false");
+                    };
+
+                    header.addEventListener("click", () => setExpanded(!item.classList.contains("open")));
+                    header.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setExpanded(!item.classList.contains("open"));
+                        }
+                    });
+                }
+
+                statusEl.style.display = "none";
+                appEl.style.display = "grid";
+            } catch (err) {
+                statusEl.className = "status-panel error-panel";
+                statusEl.innerHTML = `
+                    <h3>Connection Interrupted</h3>
+                    <p style="margin-top:8px">Failed to retrieve data from the API.</p>
+                    <p style="font-size:12px; margin-top:8px; font-family:var(--font-mono)">${escapeHtml(err?.message ?? String(err))}</p>
+                    <button class="btn-small" style="margin:16px auto 0" type="button" id="retryBtn">
+                        <span class="btn-icon" aria-hidden="true"></span>
+                        Retry
+                    </button>
+                `;
+
+                document.getElementById("retryBtn")?.addEventListener("click", () => location.reload());
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
