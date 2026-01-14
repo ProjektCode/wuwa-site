@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation - WuwaAPI</title>
     <meta name="description" content="Official documentation for WuwaAPI. Endpoints, parameters, and response examples.">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self' 'unsafe-inline'; script-src 'none'">
     <style>
         :root {
             /* Theme - Crimson (STYLE_GUIDE.md) + Wuthering Waves */
@@ -203,6 +205,7 @@
                 <p><strong>Base URL:</strong> <code>https://wuwa-api.projektcode.com</code></p>
             </div>
             <p>All endpoints (except health check) are prefixed with <code>/v1</code>.</p>
+            <p>Powered by OpenCode + GPT-5.2.</p>
         </section>
 
         <section id="limits">
@@ -216,9 +219,11 @@
                     <tr><td>List Endpoints</td><td>15 requests / min</td></tr>
                     <tr><td>Detail Endpoints</td><td>60 requests / min</td></tr>
                     <tr><td>Images</td><td>60 requests / min</td></tr>
+                    <tr><td>Docs (Swagger UI)</td><td>120 requests / min</td></tr>
                 </tbody>
             </table>
-            <p>Self-hosting: configure via <code>RATE_LIMIT_LIST_MAX</code>, <code>RATE_LIMIT_DETAIL_MAX</code>, <code>RATE_LIMIT_IMAGE_MAX</code>, and <code>RATE_LIMIT_WINDOW</code>.</p>
+            <p>Self-hosting: configure via <code>RATE_LIMIT_LIST_MAX</code>, <code>RATE_LIMIT_DETAIL_MAX</code>, <code>RATE_LIMIT_IMAGE_MAX</code>, <code>RATE_LIMIT_DOCS_MAX</code>, and <code>RATE_LIMIT_WINDOW</code>.</p>
+            <p><strong>Recommendation:</strong> keep a separate (higher) limit for <code>/docs</code> so humans browsing Swagger don’t compete with API consumers.</p>
             
             <h3>Caching</h3>
             <p>Responses include <code>ETag</code> headers. Please respect <code>Cache-Control</code> directives:</p>

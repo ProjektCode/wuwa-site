@@ -1,0 +1,21 @@
+name: Health Monitor
+
+on:
+  schedule:
+    # GitHub schedules are best-effort; keep it reasonable.
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check /healthz
+        run: curl -fsS "https://wuwa-api.projektcode.com/healthz"
+
+      - name: Check /v1/meta
+        run: curl -fsS "https://wuwa-api.projektcode.com/v1/meta" > /dev/null
