@@ -854,11 +854,19 @@
                             const r10 = renderTable(skill.scalingMdByRank["10"]);
 
                             if (r1 || r10) {
+                                const hint = `
+                                    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px; line-height:1.5">
+                                        Ranks are in-game skill levels. Values like <code style="font-family:var(--font-mono)">33.7%*2</code> indicate hit count.
+                                        The dataset does not currently specify whether a value scales from ATK/HP/DEF.
+                                    </div>
+                                `;
+
                                 scalingHtml = `
                                     <div style="margin-top:16px">
-                                        <div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Scaling (Rank 1 / 10)</div>
-                                        ${r1 ? `<div style="margin-bottom:10px">${r1}</div>` : ""}
-                                        ${r10 ? `<div>${r10}</div>` : ""}
+                                        <div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Scaling (skill rank)</div>
+                                        ${hint}
+                                        ${r1 ? `<div style="margin-bottom:12px"><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 1</div>${r1}</div>` : ""}
+                                        ${r10 ? `<div><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 10</div>${r10}</div>` : ""}
                                     </div>
                                 `;
                             }
