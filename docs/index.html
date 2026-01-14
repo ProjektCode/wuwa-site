@@ -189,7 +189,7 @@
             </div>
             <div class="nav-group">
                 <div class="nav-title">Links</div>
-                    <a href="https://wuwa.projektcode.com/docs" class="nav-item" target="_blank" rel="noopener noreferrer">Swagger UI ↗</a>
+                    <a href="https://wuwa-api.projektcode.com/docs" class="nav-item" target="_blank" rel="noopener noreferrer">Swagger UI ↗</a>
                     <a href="https://github.com/ProjektCode/wuwa-api" class="nav-item" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
             </div>
         </div>
@@ -200,7 +200,7 @@
             <h1>Introduction</h1>
             <p>Welcome to the WuwaAPI documentation. This API provides data for characters, weapons, and more from Wuthering Waves.</p>
             <div class="note">
-                <p><strong>Base URL:</strong> <code>https://wuwa.projektcode.com</code></p>
+                <p><strong>Base URL:</strong> <code>https://wuwa-api.projektcode.com</code></p>
             </div>
             <p>All endpoints (except health check) are prefixed with <code>/v1</code>.</p>
         </section>
@@ -304,7 +304,7 @@
                 </div>
                 <div class="endpoint-body">
                     <p>List available image files for a character.</p>
-                    <pre><code>curl "https://wuwa.projektcode.com/v1/characters/jinhsi/images"</code></pre>
+                    <pre><code>curl "https://wuwa-api.projektcode.com/v1/characters/jinhsi/images"</code></pre>
                     <p>The response includes URLs like <code>/v1/characters/jinhsi/images/icon.webp</code>.</p>
                 </div>
             </div>
@@ -327,7 +327,7 @@
                 </div>
                 <div class="endpoint-body">
                     <p>Static image URLs referenced by the JSON payloads (e.g. <code>icon.webp</code>, <code>card.webp</code>, <code>splash.webp</code>, <code>attribute.webp</code>).</p>
-                    <pre><code>curl -I "https://wuwa.projektcode.com/v1/images/characters/jinhsi/icon.webp"</code></pre>
+                    <pre><code>curl -I "https://wuwa-api.projektcode.com/v1/images/characters/jinhsi/icon.webp"</code></pre>
                 </div>
             </div>
         </section>

@@ -2,8 +2,8 @@
 
 Static landing page + docs site for `wuwa-api`, intended to be hosted on GitHub Pages.
 
-- Live API: https://wuwa.projektcode.com
-- API docs (Swagger UI): https://wuwa.projektcode.com/docs
+- Live API: https://wuwa-api.projektcode.com
+- API docs (Swagger UI): https://wuwa-api.projektcode.com/docs
 
 ## Local preview
 
