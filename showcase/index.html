@@ -455,13 +455,27 @@
             font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.65;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            max-width: 100%;
+        }
+
+
+        .skill-content img {
+            max-width: 100%;
+            height: auto;
         }
 
         .skill-content strong { color: var(--text-primary); }
 
         .md-table-wrap {
+            display: block;
+            width: 100%;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             margin-top: 12px;
+            margin-bottom: 1rem;
             border: 1px solid var(--border-color);
             border-radius: 10px;
         }
