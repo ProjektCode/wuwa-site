@@ -590,7 +590,81 @@
 
     <script>
         const API_BASE = "https://wuwa-api.projektcode.com";
-        const CHAR_ID = "augusta";
+
+        // Rotate the showcased character periodically to keep the page "fresh".
+        // Default: 60 minutes. Override with `?rotate=30` (minutes).
+        const DEFAULT_ROTATE_MINUTES = 60;
+
+        const STORAGE_KEY_ID = "wuwaapi.showcase.characterId";
+        const STORAGE_KEY_EXPIRES = "wuwaapi.showcase.expiresAtMs";
+
+        let currentCharacterId = "augusta";
+
+        function getRotateMinutes() {
+            const params = new URLSearchParams(window.location.search);
+            const raw = params.get("rotate");
+            if (!raw) return DEFAULT_ROTATE_MINUTES;
+            const parsed = Number(raw);
+            if (!Number.isFinite(parsed)) return DEFAULT_ROTATE_MINUTES;
+            return Math.min(Math.max(Math.round(parsed), 5), 24 * 60);
+        }
+
+        function getCachedCharacterId(nowMs) {
+            try {
+                const id = localStorage.getItem(STORAGE_KEY_ID);
+                const expiresAtMs = Number(localStorage.getItem(STORAGE_KEY_EXPIRES) ?? "0");
+                if (!id) return null;
+                if (!Number.isFinite(expiresAtMs) || expiresAtMs <= nowMs) return null;
+                return id;
+            } catch {
+                return null;
+            }
+        }
+
+        function setCachedCharacterId(id, expiresAtMs) {
+            try {
+                localStorage.setItem(STORAGE_KEY_ID, id);
+                localStorage.setItem(STORAGE_KEY_EXPIRES, String(expiresAtMs));
+            } catch {
+                // ignore (private mode / quota)
+            }
+        }
+
+        async function fetchRandomCharacterId() {
+            // Two-step: fetch total, then fetch one item at random offset.
+            const metaRes = await fetch(`${API_BASE}/v1/characters?limit=1&offset=0`);
+            if (!metaRes.ok) throw new Error(`Characters list failed: ${metaRes.status}`);
+            const meta = await metaRes.json();
+            const total = Number(meta?.total ?? 0);
+            if (!Number.isFinite(total) || total <= 0) throw new Error("Characters list returned no items");
+
+            const offset = Math.floor(Math.random() * total);
+            const pickRes = await fetch(`${API_BASE}/v1/characters?limit=1&offset=${offset}`);
+            if (!pickRes.ok) throw new Error(`Characters pick failed: ${pickRes.status}`);
+            const picked = await pickRes.json();
+            const id = picked?.items?.[0]?.id;
+            if (typeof id !== "string" || !id) throw new Error("Random character pick returned no id");
+            return id;
+        }
+
+        async function resolveCharacterId() {
+            const nowMs = Date.now();
+            const cached = getCachedCharacterId(nowMs);
+            if (cached) return cached;
+
+            const rotateMinutes = getRotateMinutes();
+            const expiresAtMs = nowMs + rotateMinutes * 60 * 1000;
+
+            try {
+                const id = await fetchRandomCharacterId();
+                setCachedCharacterId(id, expiresAtMs);
+                return id;
+            } catch {
+                // Fall back to a known-good id.
+                setCachedCharacterId(currentCharacterId, expiresAtMs);
+                return currentCharacterId;
+            }
+        }
 
         const statusEl = document.getElementById("status");
         const appEl = document.getElementById("app");
@@ -675,7 +749,7 @@
         }
 
         async function copyCurl() {
-            const curl = `curl "${API_BASE}/v1/characters/${CHAR_ID}"`;
+            const curl = `curl "${API_BASE}/v1/characters/${currentCharacterId}"`;
             try {
                 await navigator.clipboard.writeText(curl);
                 const original = copyBtn.textContent;
@@ -690,9 +764,11 @@
 
         async function init() {
             try {
+                currentCharacterId = await resolveCharacterId();
+
                 const [charRes, imgRes] = await Promise.all([
-                    fetch(`${API_BASE}/v1/characters/${CHAR_ID}`),
-                    fetch(`${API_BASE}/v1/characters/${CHAR_ID}/images`),
+                    fetch(`${API_BASE}/v1/characters/${currentCharacterId}`),
+                    fetch(`${API_BASE}/v1/characters/${currentCharacterId}/images`),
                 ]);
 
                 if (!charRes.ok) throw new Error(`Character request failed: ${charRes.status}`);
@@ -701,8 +777,8 @@
                 const charData = await charRes.json();
                 const imgData = await imgRes.json();
 
-                nameEl.textContent = charData.name ?? CHAR_ID;
-                idEl.textContent = `ID: ${charData.id ?? CHAR_ID}`;
+                nameEl.textContent = charData.name ?? currentCharacterId;
+                idEl.textContent = `ID: ${charData.id ?? currentCharacterId}`;
 
                 const pills = [];
                 if (charData.rarity) pills.push({ label: "Rarity", value: "★".repeat(charData.rarity), cls: "gold" });
