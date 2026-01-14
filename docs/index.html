@@ -1,294 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentation - WuwaAPI</title>
-    <meta name="description" content="Official documentation for WuwaAPI. Endpoints, parameters, and response examples.">
+    <meta name="description"
+        content="Official documentation for WuwaAPI. Endpoints, parameters, and response examples.">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self' 'unsafe-inline'; script-src 'none'">
-    <style>
-        :root {
-            /* Theme - Crimson (STYLE_GUIDE.md) + Wuthering Waves */
-            --bg-body: #0e0c0d; /* Obsidian */
-            --bg-sidebar: #0e0c0d; /* Obsidian */
-            --bg-code: #16131a; /* Midnight */
-            --border: #2a2426; /* Warm Graphite */
-
-            --text-main: #e8e8e8; /* White */
-            --text-muted: #a0a0a0; /* Silver */
-            --text-code: #d4d4d4;
-
-            --accent: #dc143c; /* Crimson */
-            --accent-dim: rgba(220, 20, 60, 0.15);
-
-            --font-sans: system-ui, -apple-system, sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
-
-            --sidebar-w: 260px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background: var(--bg-body);
-            color: var(--text-main);
-            font-family: var(--font-sans);
-            line-height: 1.6;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        aside {
-            width: var(--sidebar-w);
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
-            height: 100vh;
-            position: sticky;
-            top: 0;
-            overflow-y: auto;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .brand {
-            padding: 1.5rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--text-main);
-            text-decoration: none;
-            border-bottom: 1px solid var(--border);
-            display: block;
-        }
-        .brand span { color: var(--accent); }
-
-        .nav-list { padding: 1.5rem; }
-        .nav-group { margin-bottom: 2rem; }
-        .nav-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-        .nav-item {
-            display: block;
-            padding: 0.4rem 0;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .nav-item:hover { color: var(--accent); }
-        .nav-item.active { color: var(--text-main); font-weight: 500; }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            padding: 3rem 4rem;
-            max-width: 960px;
-        }
-
-        h1 { font-size: 2.5rem; margin-bottom: 1rem; letter-spacing: -0.02em; }
-        h2 { font-size: 1.75rem; margin: 3rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; color: var(--text-main); }
-        h3 { font-size: 1.25rem; margin: 2rem 0 1rem; color: var(--text-main); }
-        p { color: var(--text-muted); margin-bottom: 1.5rem; }
-
-        /* Code Blocks */
-        pre {
-            background: var(--bg-code);
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
-        }
-        code {
-            font-family: var(--font-mono);
-            font-size: 0.9em;
-            color: var(--text-code);
-        }
-        p code, li code {
-            background: rgba(42, 36, 38, 0.75);
-            padding: 0.1em 0.3em;
-            border-radius: 4px;
-            color: var(--text-main);
-        }
-
-        /* Endpoints */
-        .endpoint {
-            background: var(--bg-sidebar);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-        .endpoint-header {
-            padding: 0.75rem 1rem;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-        }
-        .method {
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-        }
-        .method.get { background: var(--accent-dim); color: var(--accent); }
-        .path { color: var(--text-main); }
-        
-        .endpoint-body { padding: 1.5rem; }
-        
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
-        th { text-align: left; color: var(--text-muted); padding: 0.5rem; border-bottom: 1px solid var(--border); font-weight: 600; }
-        td { padding: 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-code); }
-        td:first-child { font-family: var(--font-mono); color: var(--accent); }
-
-        /* Notes */
-        .note {
-            background: rgba(220, 20, 60, 0.06);
-            border-left: 3px solid var(--accent);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-        .note p { margin: 0; font-size: 0.9rem; color: var(--text-main); }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            aside { width: 100%; height: auto; position: static; }
-            main { padding: 2rem 1.5rem; }
-        }
-    </style>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self'; script-src 'none'">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/docs.css">
 </head>
+
 <body>
+    <div class="docs-wrapper">
+        <aside>
+            <a href="../index.html" class="brand">Wuwa<span>API</span> Docs</a>
+            <div class="nav-list">
+                <div class="nav-group">
+                    <div class="nav-title">General</div>
+                    <a href="#intro" class="nav-item">Introduction</a>
+                    <a href="../showcase/" class="nav-item">Showcase</a>
+                    <a href="#limits" class="nav-item">Rate Limits &amp; Cache</a>
+                    <a href="#meta" class="nav-item">Metadata</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-title">Resources</div>
+                    <a href="#characters" class="nav-item">Characters</a>
+                    <a href="#images" class="nav-item">Images</a>
+                    <a href="#weapons" class="nav-item">Weapons</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-title">Links</div>
+                    <a href="https://wuwa-api.projektcode.com/docs" class="nav-item" target="_blank"
+                        rel="noopener noreferrer">Swagger UI ↗</a>
+                    <a href="https://github.com/ProjektCode/wuwa-api" class="nav-item" target="_blank"
+                        rel="noopener noreferrer">GitHub ↗</a>
+                </div>
+            </div>
+        </aside>
 
-    <aside>
-        <a href="../index.html" class="brand">Wuwa<span>API</span> Docs</a>
-        <div class="nav-list">
-            <div class="nav-group">
-                <div class="nav-title">General</div>
-                <a href="#intro" class="nav-item">Introduction</a>
-                <a href="../showcase/" class="nav-item">Showcase</a>
-                <a href="#limits" class="nav-item">Rate Limits & Cache</a>
-                <a href="#meta" class="nav-item">Metadata</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Resources</div>
-                <a href="#characters" class="nav-item">Characters</a>
-                <a href="#images" class="nav-item">Images</a>
-                <a href="#weapons" class="nav-item">Weapons</a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-title">Links</div>
-                    <a href="https://wuwa-api.projektcode.com/docs" class="nav-item" target="_blank" rel="noopener noreferrer">Swagger UI ↗</a>
-                    <a href="https://github.com/ProjektCode/wuwa-api" class="nav-item" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-            </div>
-        </div>
-    </aside>
+        <main>
+            <section id="intro">
+                <h1>Introduction</h1>
+                <p>Welcome to the WuwaAPI documentation. This API provides data for characters, weapons, and more from
+                    Wuthering Waves.</p>
+                <div class="note">
+                    <p><strong>Base URL:</strong> <code>https://wuwa-api.projektcode.com</code></p>
+                </div>
+                <p>All endpoints (except health check) are prefixed with <code>/v1</code>.</p>
+                <p>Powered by OpenCode + GPT-5.2.</p>
+            </section>
 
-    <main>
-        <section id="intro">
-            <h1>Introduction</h1>
-            <p>Welcome to the WuwaAPI documentation. This API provides data for characters, weapons, and more from Wuthering Waves.</p>
-            <div class="note">
-                <p><strong>Base URL:</strong> <code>https://wuwa-api.projektcode.com</code></p>
-            </div>
-            <p>All endpoints (except health check) are prefixed with <code>/v1</code>.</p>
-            <p>Powered by OpenCode + GPT-5.2.</p>
-        </section>
+            <section id="limits">
+                <h2>Rate Limits &amp; Caching</h2>
+                <p>Rate limits are enforced per IP address (defaults shown below).</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Limit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>List Endpoints</td>
+                            <td>15 requests / min</td>
+                        </tr>
+                        <tr>
+                            <td>Detail Endpoints</td>
+                            <td>60 requests / min</td>
+                        </tr>
+                        <tr>
+                            <td>Images</td>
+                            <td>60 requests / min</td>
+                        </tr>
+                        <tr>
+                            <td>Docs (Swagger UI)</td>
+                            <td>120 requests / min</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Self-hosting: configure via <code>RATE_LIMIT_LIST_MAX</code>, <code>RATE_LIMIT_DETAIL_MAX</code>,
+                    <code>RATE_LIMIT_IMAGE_MAX</code>, <code>RATE_LIMIT_DOCS_MAX</code>, and
+                    <code>RATE_LIMIT_WINDOW</code>.
+                </p>
+                <p><strong>Recommendation:</strong> keep a separate (higher) limit for <code>/docs</code> so humans
+                    browsing Swagger don't compete with API consumers.</p>
 
-        <section id="limits">
-            <h2>Rate Limits & Caching</h2>
-            <p>Rate limits are enforced per IP address (defaults shown below).</p>
-            <table>
-                <thead>
-                    <tr><th>Type</th><th>Limit</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>List Endpoints</td><td>15 requests / min</td></tr>
-                    <tr><td>Detail Endpoints</td><td>60 requests / min</td></tr>
-                    <tr><td>Images</td><td>60 requests / min</td></tr>
-                    <tr><td>Docs (Swagger UI)</td><td>120 requests / min</td></tr>
-                </tbody>
-            </table>
-            <p>Self-hosting: configure via <code>RATE_LIMIT_LIST_MAX</code>, <code>RATE_LIMIT_DETAIL_MAX</code>, <code>RATE_LIMIT_IMAGE_MAX</code>, <code>RATE_LIMIT_DOCS_MAX</code>, and <code>RATE_LIMIT_WINDOW</code>.</p>
-            <p><strong>Recommendation:</strong> keep a separate (higher) limit for <code>/docs</code> so humans browsing Swagger don’t compete with API consumers.</p>
-            
-            <h3>Caching</h3>
-            <p>Responses include <code>ETag</code> headers. Please respect <code>Cache-Control</code> directives:</p>
-            <ul>
-                <li><strong>JSON Data:</strong> <code>public, max-age=300</code> (5 minutes)</li>
-                <li><strong>Images:</strong> <code>public, max-age=31536000, immutable</code> (1 year)</li>
-            </ul>
-        </section>
+                <h3>Caching</h3>
+                <p>Responses include <code>ETag</code> headers. Please respect <code>Cache-Control</code> directives:
+                </p>
+                <ul>
+                    <li><strong>JSON Data:</strong> <code>public, max-age=300</code> (5 minutes)</li>
+                    <li><strong>Images:</strong> <code>public, max-age=31536000, immutable</code> (1 year)</li>
+                </ul>
+            </section>
 
-        <section id="meta">
-            <h2>Metadata</h2>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/healthz</span>
+            <section id="meta">
+                <h2>Metadata</h2>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/healthz</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Health check endpoint. Returns 200 OK if service is up.</p>
+                    </div>
                 </div>
-                <div class="endpoint-body">
-                    <p>Health check endpoint. Returns 200 OK if service is up.</p>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/meta</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Get server metadata and version info.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/meta</span>
-                </div>
-                <div class="endpoint-body">
-                    <p>Get server metadata and version info.</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="characters">
-            <h2>Characters</h2>
-            
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/characters</span>
-                </div>
-                <div class="endpoint-body">
-                    <p>List all characters with pagination and filtering.</p>
-                    <h4>Query Parameters</h4>
-                    <table>
-                        <thead><tr><th>Param</th><th>Description</th></tr></thead>
-                        <tbody>
-                            <tr><td>search</td><td>Filter by name (fuzzy match)</td></tr>
-                            <tr><td>element</td><td>Filter by element (e.g. Glacio)</td></tr>
-                            <tr><td>weaponType</td><td>Filter by weapon type</td></tr>
-                            <tr><td>rarity</td><td>Filter by star rating (4 or 5)</td></tr>
-                            <tr><td>limit</td><td>Max results (default 20)</td></tr>
-                            <tr><td>offset</td><td>Pagination offset</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <section id="characters">
+                <h2>Characters</h2>
 
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/characters/:id</span>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/characters</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>List all characters with pagination and filtering.</p>
+                        <h4>Query Parameters</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Param</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>search</td>
+                                    <td>Filter by name (fuzzy match)</td>
+                                </tr>
+                                <tr>
+                                    <td>element</td>
+                                    <td>Filter by element (e.g. Glacio)</td>
+                                </tr>
+                                <tr>
+                                    <td>weaponType</td>
+                                    <td>Filter by weapon type</td>
+                                </tr>
+                                <tr>
+                                    <td>rarity</td>
+                                    <td>Filter by star rating (4 or 5)</td>
+                                </tr>
+                                <tr>
+                                    <td>limit</td>
+                                    <td>Max results (default 20)</td>
+                                </tr>
+                                <tr>
+                                    <td>offset</td>
+                                    <td>Pagination offset</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="endpoint-body">
-                    <p>Get detailed info for a single character.</p>
-                    <p><strong>:id</strong> can be the character name (case-insensitive, e.g. <code>jinhsi</code>).</p>
-                    <pre><code>{
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/characters/:id</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Get detailed info for a single character.</p>
+                        <p><strong>:id</strong> can be the character name (case-insensitive, e.g. <code>jinhsi</code>).
+                        </p>
+                        <pre><code>{
   "name": "Jinhsi",
   "rarity": 5,
   "element": "Spectro",
@@ -296,81 +186,120 @@
   "stats": { ... },
   "images": { ... }
 }</code></pre>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="images">
-            <h2>Images</h2>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/characters/:id/images</span>
+            <section id="images">
+                <h2>Images</h2>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/characters/:id/images</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>List available image files for a character.</p>
+                        <pre><code>curl "https://wuwa-api.projektcode.com/v1/characters/jinhsi/images"</code></pre>
+                        <p>The response includes URLs like <code>/v1/characters/jinhsi/images/icon.webp</code>.</p>
+                    </div>
                 </div>
-                <div class="endpoint-body">
-                    <p>List available image files for a character.</p>
-                    <pre><code>curl "https://wuwa-api.projektcode.com/v1/characters/jinhsi/images"</code></pre>
-                    <p>The response includes URLs like <code>/v1/characters/jinhsi/images/icon.webp</code>.</p>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/characters/:id/images/:file</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Serve a raw image file.</p>
+                        <p><strong>:file</strong> must match one of the filenames returned by
+                            <code>/v1/characters/:id/images</code> (including extension, e.g. <code>icon.webp</code>).
+                        </p>
+                        <div class="note">
+                            <p>These responses are immutable and cached for 1 year.</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/characters/:id/images/:file</span>
-                </div>
-                <div class="endpoint-body">
-                    <p>Serve a raw image file.</p>
-                    <p><strong>:file</strong> must match one of the filenames returned by <code>/v1/characters/:id/images</code> (including extension, e.g. <code>icon.webp</code>).</p>
-                    <div class="note"><p>These responses are immutable and cached for 1 year.</p></div>
-                </div>
-            </div>
 
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/images/characters/:id/:asset.webp</span>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/images/characters/:id/:asset.webp</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Static image URLs referenced by the JSON payloads (e.g. <code>icon.webp</code>,
+                            <code>card.webp</code>, <code>splash.webp</code>, <code>attribute.webp</code>).
+                        </p>
+                        <pre><code>curl -I "https://wuwa-api.projektcode.com/v1/images/characters/jinhsi/icon.webp"</code></pre>
+                    </div>
                 </div>
-                <div class="endpoint-body">
-                    <p>Static image URLs referenced by the JSON payloads (e.g. <code>icon.webp</code>, <code>card.webp</code>, <code>splash.webp</code>, <code>attribute.webp</code>).</p>
-                    <pre><code>curl -I "https://wuwa-api.projektcode.com/v1/images/characters/jinhsi/icon.webp"</code></pre>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="weapons">
-            <h2>Weapons</h2>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/weapons</span>
+            <section id="weapons">
+                <h2>Weapons</h2>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/weapons</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>List all weapons.</p>
+                        <h4>Query Parameters</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Param</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>search</td>
+                                    <td>Filter by name</td>
+                                </tr>
+                                <tr>
+                                    <td>type</td>
+                                    <td>Filter by weapon type (e.g. Sword)</td>
+                                </tr>
+                                <tr>
+                                    <td>rarity</td>
+                                    <td>Filter by star rating</td>
+                                </tr>
+                                <tr>
+                                    <td>limit</td>
+                                    <td>Max results</td>
+                                </tr>
+                                <tr>
+                                    <td>offset</td>
+                                    <td>Pagination offset</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="endpoint-body">
-                    <p>List all weapons.</p>
-                    <h4>Query Parameters</h4>
-                    <table>
-                        <thead><tr><th>Param</th><th>Description</th></tr></thead>
-                        <tbody>
-                            <tr><td>search</td><td>Filter by name</td></tr>
-                            <tr><td>type</td><td>Filter by weapon type (e.g. Sword)</td></tr>
-                            <tr><td>rarity</td><td>Filter by star rating</td></tr>
-                            <tr><td>limit</td><td>Max results</td></tr>
-                            <tr><td>offset</td><td>Pagination offset</td></tr>
-                        </tbody>
-                    </table>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/v1/weapons/:id</span>
+                    </div>
+                    <div class="endpoint-body">
+                        <p>Get detailed info for a single weapon.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="endpoint">
-                <div class="endpoint-header">
-                    <span class="method get">GET</span>
-                    <span class="path">/v1/weapons/:id</span>
-                </div>
-                <div class="endpoint-body">
-                    <p>Get detailed info for a single weapon.</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-    </main>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="./">Docs</a>
+            <a href="../showcase/">Showcase</a>
+            <a href="https://wuwa-api.projektcode.com/docs" target="_blank" rel="noopener noreferrer">Swagger</a>
+            <a href="https://github.com/ProjektCode/wuwa-api" target="_blank" rel="noopener noreferrer">API Repo</a>
+            <a href="https://github.com/ProjektCode/wuwa-site" target="_blank" rel="noopener noreferrer">Site Repo</a>
+        </div>
+        <p>&copy; 2026 WuwaAPI. Not affiliated with Kuro Games. Powered by OpenCode + GPT-5.2.</p>
+    </footer>
 
 </body>
+
 </html>

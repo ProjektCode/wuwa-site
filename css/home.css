@@ -1,0 +1,195 @@
+/* ==========================================================================
+   Home Page Styles - WuwaAPI
+   ========================================================================== */
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero {
+    padding: 180px 0 120px;
+    text-align: center;
+    position: relative;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to bottom, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 540px;
+    margin: 0 auto 3rem;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 4rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 24px rgba(220, 20, 60, 0.22);
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--text-secondary);
+}
+
+/* Code Demo */
+.code-preview {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: left;
+    box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.55);
+}
+
+.window-bar {
+    padding: 12px 16px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #333;
+}
+
+.window-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-right: auto;
+}
+
+.code-content {
+    padding: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: #d4d4d4;
+    overflow-x: auto;
+}
+
+/* Syntax Highlight (Crimson) */
+.k {
+    color: #ff4466;
+}
+
+/* keywords */
+.s {
+    color: #50c878;
+}
+
+/* strings */
+.f {
+    color: #5b9bd5;
+}
+
+/* functions */
+.c {
+    color: #6a6a6a;
+    font-style: italic;
+}
+
+/* comments */
+.n {
+    color: #ff8866;
+}
+
+/* numbers/properties */
+
+/* Features Grid */
+.features {
+    padding: 100px 0;
+    border-top: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, var(--bg-deep), var(--bg-surface));
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    padding: 2rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.icon {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+    display: block;
+    background: currentColor;
+    box-shadow: 0 0 0 6px rgba(220, 20, 60, 0.08);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 3rem;
+    }
+}

@@ -1,0 +1,246 @@
+/* ==========================================================================
+   Documentation Page Styles - WuwaAPI
+   ========================================================================== */
+
+:root {
+    --sidebar-w: 260px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Wrapper for sidebar layout */
+.docs-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+/* Sidebar */
+aside {
+    width: var(--sidebar-w);
+    background: var(--bg-deep);
+    border-right: 1px solid var(--border-color);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    padding: 1.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
+    display: block;
+}
+
+.brand span {
+    color: var(--accent);
+}
+
+.nav-list {
+    padding: 1.5rem;
+}
+
+.nav-group {
+    margin-bottom: 2rem;
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.nav-item {
+    display: block;
+    padding: 0.4rem 0;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.nav-item:hover {
+    color: var(--accent);
+}
+
+.nav-item.active {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Main Content */
+main {
+    flex: 1;
+    padding: 3rem 4rem;
+    max-width: 960px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.75rem;
+    margin: 3rem 0 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+h3 {
+    font-size: 1.25rem;
+    margin: 2rem 0 1rem;
+    color: var(--text-primary);
+}
+
+p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* Code Blocks */
+pre {
+    background: var(--bg-surface);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: #d4d4d4;
+}
+
+p code,
+li code {
+    background: rgba(42, 36, 38, 0.75);
+    padding: 0.1em 0.3em;
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+/* Endpoints */
+.endpoint {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.endpoint-header {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.method {
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.method.get {
+    background: var(--accent-dim);
+    color: var(--accent);
+}
+
+.path {
+    color: var(--text-primary);
+}
+
+.endpoint-body {
+    padding: 1.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+th {
+    text-align: left;
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+td {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: #d4d4d4;
+}
+
+td:first-child {
+    font-family: var(--font-mono);
+    color: var(--accent);
+}
+
+/* Notes */
+.note {
+    background: rgba(220, 20, 60, 0.06);
+    border-left: 3px solid var(--accent);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.note p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+/* Footer - docs specific adjustments */
+footer {
+    padding: 2rem 1.5rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .docs-wrapper {
+        flex-direction: column;
+    }
+
+    aside {
+        width: 100%;
+        height: auto;
+        position: static;
+    }
+
+    main {
+        padding: 2rem 1.5rem;
+    }
+}

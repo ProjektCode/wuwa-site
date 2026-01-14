@@ -1,231 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WuwaAPI - The Unofficial Wuthering Waves API</title>
-    <meta name="description" content="A high-performance, open-source REST API for Wuthering Waves game data. Characters, Weapons, and Metadata.">
+    <meta name="description"
+        content="A high-performance, open-source REST API for Wuthering Waves game data. Characters, Weapons, and Metadata.">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self' 'unsafe-inline'; script-src 'none'">
-    <style>
-        :root {
-            /* Theme - Crimson (STYLE_GUIDE.md) + Wuthering Waves */
-            --bg-deep: #0e0c0d; /* Obsidian */
-            --bg-surface: #16131a; /* Midnight */
-            --bg-highlight: #1e1a1c; /* Dark Mauve */
-            --border-color: #2a2426; /* Warm Graphite */
-
-            --text-primary: #e8e8e8; /* White */
-            --text-secondary: #a0a0a0; /* Silver */
-            --text-tertiary: #6a6a6a; /* Gray */
-
-            --brand-cyan: #dc143c; /* Crimson (accent) */
-            --brand-glow: rgba(220, 20, 60, 0.14);
-
-            --font-sans: system-ui, -apple-system, sans-serif;
-            --font-mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
-
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Reset & Base */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        a { text-decoration: none; color: inherit; transition: color 0.2s; }
-        ul { list-style: none; }
-
-        /* Layout */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 64px;
-            background: rgba(14, 12, 13, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-        }
-        .nav-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-        .logo {
-            font-weight: 700;
-            font-size: 1.25rem;
-            letter-spacing: -0.02em;
-        }
-        .logo span { color: var(--brand-cyan); }
-        
-        .nav-links { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; }
-        .nav-links a { color: var(--text-secondary); }
-        .nav-links a:hover { color: var(--text-primary); }
-
-        /* Hero Section */
-        .hero {
-            padding: 180px 0 120px;
-            text-align: center;
-            position: relative;
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to bottom, var(--text-primary), var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 540px;
-            margin: 0 auto 3rem;
-        }
-
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 4rem;
-        }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: transform 0.2s var(--ease-out), box-shadow 0.2s;
-        }
-        .btn:active { transform: scale(0.98); }
-        
-        .btn-primary {
-            background: var(--brand-cyan);
-            color: #ffffff;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 24px rgba(220, 20, 60, 0.22);
-        }
-        
-        .btn-ghost {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-        .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--text-secondary);
-        }
-
-        /* Code Demo */
-        .code-preview {
-            max-width: 680px;
-            margin: 0 auto;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            text-align: left;
-            box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.55);
-        }
-        .window-bar {
-            padding: 12px 16px;
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-        .window-title { margin-left: auto; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-tertiary); margin-right: auto; }
-        
-        .code-content {
-            padding: 24px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: #d4d4d4;
-            overflow-x: auto;
-        }
-
-        /* Syntax Highlight (Crimson) */
-        .k { color: #ff4466; } /* keywords */
-        .s { color: #50c878; } /* strings */
-        .f { color: #5b9bd5; } /* functions */
-        .c { color: #6a6a6a; font-style: italic; } /* comments */
-        .n { color: #ff8866; } /* numbers/properties */
-
-        /* Features Grid */
-        .features {
-            padding: 100px 0;
-            border-top: 1px solid var(--border-color);
-            background: linear-gradient(to bottom, var(--bg-deep), var(--bg-surface));
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-        .card {
-            padding: 2rem;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-        }
-        .card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-primary); }
-        .card p { font-size: 0.9rem; color: var(--text-secondary); }
-        .icon {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            margin-bottom: 1rem;
-            display: block;
-            background: currentColor;
-            box-shadow: 0 0 0 6px rgba(220, 20, 60, 0.08);
-        }
-
-        /* Footer */
-        footer {
-            padding: 3rem 0;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-        }
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .footer-links a:hover { color: var(--brand-cyan); text-decoration: underline; }
-
-        @media (max-width: 640px) {
-            h1 { font-size: 3rem; }
-            .nav-links { display: none; }
-        }
-    </style>
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self'; script-src 'none'">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -248,10 +36,11 @@
                     A high-performance, open-source REST API for Wuthering Waves.<br>
                     Characters, Weapons, and Metadata at your fingertips.
                 </p>
-                
+
                 <div class="btn-group">
                     <a href="./docs/" class="btn btn-primary">Read the Docs</a>
-                    <a href="https://wuwa-api.projektcode.com/docs" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">View Swagger UI</a>
+                    <a href="https://wuwa-api.projektcode.com/docs" class="btn btn-ghost" target="_blank"
+                        rel="noopener noreferrer">View Swagger UI</a>
                 </div>
 
                 <div class="code-preview">
@@ -262,23 +51,26 @@
                         <div class="window-title">bash</div>
                     </div>
                     <div class="code-content">
-<span class="c"># Get Jinhsi's character data</span>
-<span class="f">curl</span> <span class="s">"https://wuwa-api.projektcode.com/v1/characters/jinhsi"</span>
+                        <span class="c"># Get Jinhsi's character data</span>
+                        <span class="f">curl</span> <span
+                            class="s">"https://wuwa-api.projektcode.com/v1/characters/jinhsi"</span>
 
-<span class="c"># Response (JSON)</span>
-{
-  <span class="n">"id"</span>: <span class="s">"jinhsi"</span>,
-  <span class="n">"name"</span>: <span class="s">"Jinhsi"</span>,
-  <span class="n">"rarity"</span>: <span class="n">5</span>,
-  <span class="n">"element"</span>: <span class="s">"Spectro"</span>,
-  <span class="n">"weaponType"</span>: <span class="s">"Broadblade"</span>,
-  <span class="n">"images"</span>: {
-    <span class="n">"icon"</span>: <span class="s">"/v1/images/characters/jinhsi/icon.webp"</span>,
-    <span class="n">"card"</span>: <span class="s">"/v1/images/characters/jinhsi/card.webp"</span>,
-    <span class="n">"splash"</span>: <span class="s">"/v1/images/characters/jinhsi/splash.webp"</span>,
-    <span class="n">"attribute"</span>: <span class="s">"/v1/images/characters/jinhsi/attribute.webp"</span>
-  }
-}
+                        <span class="c"># Response (JSON)</span>
+                        {
+                        <span class="n">"id"</span>: <span class="s">"jinhsi"</span>,
+                        <span class="n">"name"</span>: <span class="s">"Jinhsi"</span>,
+                        <span class="n">"rarity"</span>: <span class="n">5</span>,
+                        <span class="n">"element"</span>: <span class="s">"Spectro"</span>,
+                        <span class="n">"weaponType"</span>: <span class="s">"Broadblade"</span>,
+                        <span class="n">"images"</span>: {
+                        <span class="n">"icon"</span>: <span class="s">"/v1/images/characters/jinhsi/icon.webp"</span>,
+                        <span class="n">"card"</span>: <span class="s">"/v1/images/characters/jinhsi/card.webp"</span>,
+                        <span class="n">"splash"</span>: <span
+                            class="s">"/v1/images/characters/jinhsi/splash.webp"</span>,
+                        <span class="n">"attribute"</span>: <span
+                            class="s">"/v1/images/characters/jinhsi/attribute.webp"</span>
+                        }
+                        }
                     </div>
                 </div>
             </div>
@@ -288,19 +80,22 @@
             <div class="container">
                 <div class="grid">
                     <div class="card">
-                        <span class="icon" style="color: var(--brand-cyan)" aria-hidden="true"></span>
+                        <span class="icon" style="color: var(--accent)" aria-hidden="true"></span>
                         <h3>Blazing Fast</h3>
-                        <p>Powered by edge caching. Responses are ETaged and cache-controlled (max-age=300) for optimal performance.</p>
+                        <p>Powered by edge caching. Responses are ETaged and cache-controlled (max-age=300) for optimal
+                            performance.</p>
                     </div>
                     <div class="card">
                         <span class="icon" style="color: #f472b6" aria-hidden="true"></span>
                         <h3>Asset Delivery</h3>
-                        <p>Access optimized game assets directly. Character portraits and weapon icons are served with immutable caching.</p>
+                        <p>Access optimized game assets directly. Character portraits and weapon icons are served with
+                            immutable caching.</p>
                     </div>
                     <div class="card">
                         <span class="icon" style="color: #fbbf24" aria-hidden="true"></span>
                         <h3>Developer Ready</h3>
-                        <p>RESTful design, predictable resource URLs, and comprehensive Swagger documentation for easy integration.</p>
+                        <p>RESTful design, predictable resource URLs, and comprehensive Swagger documentation for easy
+                            integration.</p>
                     </div>
                 </div>
             </div>
@@ -314,11 +109,13 @@
                 <a href="./showcase/">Showcase</a>
                 <a href="https://wuwa-api.projektcode.com/docs" target="_blank" rel="noopener noreferrer">Swagger</a>
                 <a href="https://github.com/ProjektCode/wuwa-api" target="_blank" rel="noopener noreferrer">API Repo</a>
-                <a href="https://github.com/ProjektCode/wuwa-site" target="_blank" rel="noopener noreferrer">Site Repo</a>
+                <a href="https://github.com/ProjektCode/wuwa-site" target="_blank" rel="noopener noreferrer">Site
+                    Repo</a>
             </div>
             <p>&copy; 2026 WuwaAPI. Not affiliated with Kuro Games. Powered by OpenCode + GPT-5.2.</p>
         </div>
     </footer>
 
 </body>
+
 </html>
