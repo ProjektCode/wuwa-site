@@ -399,11 +399,16 @@
                                 `;
 
                                 scalingHtml = `
-                                    <div style="margin-top:16px">
-                                        <div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Scaling (skill rank)</div>
-                                        ${hint}
-                                        ${r1 ? `<div style="margin-bottom:12px"><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 1</div>${r1}</div>` : ""}
-                                        ${r10 ? `<div><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 10</div>${r10}</div>` : ""}
+                                    <div class="scaling-section">
+                                        <button type="button" class="scaling-toggle" aria-expanded="false">
+                                            <span>Scaling (skill rank)</span>
+                                            <svg class="scaling-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                                        </button>
+                                        <div class="scaling-body">
+                                            ${hint}
+                                            ${r1 ? `<div style="margin-bottom:12px"><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 1</div>${r1}</div>` : ""}
+                                            ${r10 ? `<div><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 10</div>${r10}</div>` : ""}
+                                        </div>
                                     </div>
                                 `;
                             }
@@ -444,6 +449,18 @@
                             e.preventDefault();
                             setExpanded(!item.classList.contains("open"));
                         }
+                    });
+                }
+
+                // Setup scaling table toggles
+                for (const section of skillsEl.querySelectorAll(".scaling-section")) {
+                    const toggle = section.querySelector(".scaling-toggle");
+                    const body = section.querySelector(".scaling-body");
+                    if (!toggle || !body) continue;
+
+                    toggle.addEventListener("click", () => {
+                        const isOpen = section.classList.toggle("open");
+                        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
                     });
                 }
 
