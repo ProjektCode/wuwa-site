@@ -528,6 +528,8 @@ td {
     max-height: 2000px;
     padding: 12px;
     overflow-y: auto;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 /* Mobile */
