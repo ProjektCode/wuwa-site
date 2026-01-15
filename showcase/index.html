@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Showcase - What you can build with WuwaAPI</title>
-    <meta name="description" content="A live demo showcasing the capabilities of WuwaAPI.">
+    <title>Showcase - WuwaAPI</title>
+    <meta name="description"
+        content="A live demo showcasing the capabilities of WuwaAPI - Wuthering Waves character data.">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' https://wuwa-api.projektcode.com data:; style-src 'self'; script-src 'self' 'unsafe-inline'; connect-src https://wuwa-api.projektcode.com">
-    <link rel="icon" href="https://wuwa-api.projektcode.com/v1/images/characters/augusta/icon.webp" type="image/webp" />
-    <link rel="stylesheet" href="../css/base.css?v=1.1">
-    <link rel="stylesheet" href="../css/showcase.css?v=1.1">
+    <link rel="icon" href="https://wuwa-api.projektcode.com/v1/images/characters/jinhsi/icon.webp" type="image/webp" />
+    <link rel="stylesheet" href="../css/base.css?v=2.0">
+    <link rel="stylesheet" href="../css/showcase.css?v=2.0">
 </head>
 
 <body>
-
     <nav class="navbar">
         <div class="container nav-inner">
             <a href="../" class="logo">Wuwa<span>API</span></a>
@@ -29,460 +29,335 @@
     </nav>
 
     <main>
-        <div class="container">
-            <div class="page-header">
-                <h1>What you can build with WuwaAPI</h1>
-                <p>A live example fetching real-time data from the API.</p>
-            </div>
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Loading character data...</p>
+        </div>
 
-            <div class="api-tools">
-                <button class="btn-small" id="copyBtn" type="button">
-                    <span class="btn-icon" aria-hidden="true"></span>
-                    Copy curl
-                </button>
-                <a href="https://wuwa-api.projektcode.com/docs" target="_blank" rel="noopener noreferrer"
-                    class="btn-small">
-                    <span class="btn-icon" aria-hidden="true"></span>
-                    Open Swagger
-                </a>
-            </div>
+        <!-- Error State -->
+        <div id="errorState" class="error-state" style="display: none;">
+            <h2>Connection Failed</h2>
+            <p id="errorMessage">Unable to fetch data from the API.</p>
+            <button type="button" id="retryBtn" class="btn-primary">Retry</button>
+        </div>
 
-            <div id="status" class="status-panel">
-                Initializing linkage to Solaris-3...
-            </div>
-
-            <div id="app" class="app-grid" style="display: none;">
-                <div class="left-col">
-                    <div class="card">
-                        <div class="card-hero">
-                            <div class="title-row">
-                                <div class="name-group">
-                                    <h2 id="charName">Character</h2>
-                                    <img id="attrIcon" class="attr-icon" alt="Element" style="display:none">
-                                </div>
-                                <div class="id-badge" id="charId">ID: --</div>
-                            </div>
-                            <div class="pill-row" id="pills"></div>
-                        </div>
-
-                        <div class="main-image-box" id="mainImgBox">
-                            <img id="mainImg" alt="Character Image">
-                        </div>
-
-                        <div class="thumb-bar" id="imgThumbs"></div>
-
-                        <div class="section">
-                            <h3>Base Stats</h3>
-                            <div class="stats-grid" id="statsGrid"></div>
-                            <div style="margin-top:10px; font-size:10px; color:var(--text-tertiary); text-align:right">
-                                Source: Fandom Wiki
+        <!-- Character Display -->
+        <div id="characterDisplay" class="character-display" style="display: none;">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-bg" id="heroBg"></div>
+                <div class="hero-content container">
+                    <div class="char-header">
+                        <img id="attrIcon" class="attr-icon" alt="Element" />
+                        <div class="char-info">
+                            <h1 id="charName">Character Name</h1>
+                            <div class="char-meta">
+                                <span id="charRarity" class="rarity">★★★★★</span>
+                                <span id="charElement" class="element-badge">Element</span>
+                                <span id="charWeapon" class="weapon-badge">Weapon</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="right-col">
-                    <div class="card">
-                        <div class="section">
-                            <h3>Resonance Skills</h3>
-                            <div id="skillsList"></div>
+            <!-- Content Tabs -->
+            <div class="container">
+                <div class="tabs-container">
+                    <nav class="tab-nav">
+                        <button type="button" class="tab-btn active" data-tab="overview">Overview</button>
+                        <button type="button" class="tab-btn" data-tab="skills">Skills</button>
+                        <button type="button" class="tab-btn" data-tab="stats">Stats</button>
+                    </nav>
+
+                    <!-- Overview Tab -->
+                    <div class="tab-content active" id="tab-overview">
+                        <div class="overview-grid">
+                            <div class="card">
+                                <h3>Character Images</h3>
+                                <div id="imageGallery" class="image-gallery"></div>
+                            </div>
+                            <div class="card">
+                                <h3>API Information</h3>
+                                <div class="api-info">
+                                    <div class="info-row">
+                                        <span class="label">Character ID</span>
+                                        <code id="charId">-</code>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">Last Updated</span>
+                                        <span id="lastUpdated">-</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">Data Source</span>
+                                        <a id="sourceLink" href="#" target="_blank" rel="noopener noreferrer">View
+                                            Source</a>
+                                    </div>
+                                </div>
+                                <div class="endpoint-demo">
+                                    <p class="endpoint-label">Try this endpoint:</p>
+                                    <code id="endpointUrl" class="endpoint-code">GET /v1/characters/:id</code>
+                                    <button type="button" id="copyEndpoint" class="btn-small">Copy</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Skills Tab -->
+                    <div class="tab-content" id="tab-skills">
+                        <div id="skillsList" class="skills-list"></div>
+                    </div>
+
+                    <!-- Stats Tab -->
+                    <div class="tab-content" id="tab-stats">
+                        <div class="stats-card">
+                            <h3>Character Stats by Level</h3>
+                            <div id="statsTable" class="stats-table-wrap"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="showcase-footer">
+                    <p>Character rotates automatically. Data provided by <a href="https://wuwa-api.projektcode.com"
+                            target="_blank">WuwaAPI</a>.</p>
+                    <p class="disclaimer">Not affiliated with Kuro Games. Powered by community data.</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="container">
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p>&copy; 2026 WuwaAPI. Not affiliated with Kuro Games.</p>
             <div class="footer-links">
                 <a href="../docs/">Docs</a>
                 <a href="./">Showcase</a>
-                <a href="https://wuwa-api.projektcode.com/docs" target="_blank" rel="noopener noreferrer">Swagger</a>
-                <a href="https://github.com/ProjektCode/wuwa-api" target="_blank" rel="noopener noreferrer">API Repo</a>
-                <a href="https://github.com/ProjektCode/wuwa-site" target="_blank" rel="noopener noreferrer">Site
-                    Repo</a>
+                <a href="https://wuwa-api.projektcode.com/docs" target="_blank">API</a>
+                <a href="https://github.com/ProjektCode/wuwa-api" target="_blank">GitHub</a>
             </div>
-            <p>&copy; 2026 WuwaAPI. Not affiliated with Kuro Games. Powered by OpenCode + GPT-5.2.</p>
         </div>
     </footer>
 
     <script>
         const API_BASE = "https://wuwa-api.projektcode.com";
+        const ROTATION_INTERVAL = 45 * 60 * 1000; // 45 minutes
+        const STORAGE_KEY = "wuwaapi.showcase";
 
-        // Rotate the showcased character periodically to keep the page "fresh".
-        // Default: 60 minutes. Override with `?rotate=30` (minutes).
-        const DEFAULT_ROTATE_MINUTES = 60;
+        // DOM Elements
+        const loadingState = document.getElementById("loadingState");
+        const errorState = document.getElementById("errorState");
+        const characterDisplay = document.getElementById("characterDisplay");
+        const retryBtn = document.getElementById("retryBtn");
 
-        const STORAGE_KEY_ID = "wuwaapi.showcase.characterId";
-        const STORAGE_KEY_EXPIRES = "wuwaapi.showcase.expiresAtMs";
-
-        let currentCharacterId = "augusta";
-
-        function getRotateMinutes() {
-            const params = new URLSearchParams(window.location.search);
-            const raw = params.get("rotate");
-            if (!raw) return DEFAULT_ROTATE_MINUTES;
-            const parsed = Number(raw);
-            if (!Number.isFinite(parsed)) return DEFAULT_ROTATE_MINUTES;
-            return Math.min(Math.max(Math.round(parsed), 5), 24 * 60);
+        // Utility Functions
+        function escapeHtml(str) {
+            if (!str) return "";
+            const div = document.createElement("div");
+            div.textContent = str;
+            return div.innerHTML;
         }
 
-        function getCachedCharacterId(nowMs) {
-            try {
-                const id = localStorage.getItem(STORAGE_KEY_ID);
-                const expiresAtMs = Number(localStorage.getItem(STORAGE_KEY_EXPIRES) ?? "0");
-                if (!id) return null;
-                if (!Number.isFinite(expiresAtMs) || expiresAtMs <= nowMs) return null;
-                return id;
-            } catch {
-                return null;
-            }
+        function resolveUrl(path) {
+            if (!path) return "";
+            return path.startsWith("http") ? path : `${API_BASE}${path}`;
         }
 
-        function setCachedCharacterId(id, expiresAtMs) {
-            try {
-                localStorage.setItem(STORAGE_KEY_ID, id);
-                localStorage.setItem(STORAGE_KEY_EXPIRES, String(expiresAtMs));
-            } catch {
-                // ignore (private mode / quota)
-            }
-        }
-
-        async function fetchRandomCharacterId() {
-            // Two-step: fetch total, then fetch one item at random offset.
-            const metaRes = await fetch(`${API_BASE}/v1/characters?limit=1&offset=0`);
-            if (!metaRes.ok) throw new Error(`Characters list failed: ${metaRes.status}`);
-            const meta = await metaRes.json();
-            const total = Number(meta?.total ?? 0);
-            if (!Number.isFinite(total) || total <= 0) throw new Error("Characters list returned no items");
-
-            const offset = Math.floor(Math.random() * total);
-            const pickRes = await fetch(`${API_BASE}/v1/characters?limit=1&offset=${offset}`);
-            if (!pickRes.ok) throw new Error(`Characters pick failed: ${pickRes.status}`);
-            const picked = await pickRes.json();
-            const id = picked?.items?.[0]?.id;
-            if (typeof id !== "string" || !id) throw new Error("Random character pick returned no id");
-            return id;
-        }
-
-        async function resolveCharacterId() {
-            const nowMs = Date.now();
-            const cached = getCachedCharacterId(nowMs);
-            if (cached) return cached;
-
-            const rotateMinutes = getRotateMinutes();
-            const expiresAtMs = nowMs + rotateMinutes * 60 * 1000;
-
-            try {
-                const id = await fetchRandomCharacterId();
-                setCachedCharacterId(id, expiresAtMs);
-                return id;
-            } catch {
-                // Fall back to a known-good id.
-                setCachedCharacterId(currentCharacterId, expiresAtMs);
-                return currentCharacterId;
-            }
-        }
-
-        const statusEl = document.getElementById("status");
-        const appEl = document.getElementById("app");
-        const nameEl = document.getElementById("charName");
-        const idEl = document.getElementById("charId");
-        const pillsEl = document.getElementById("pills");
-        const mainImgEl = document.getElementById("mainImg");
-        const mainImgBox = document.getElementById("mainImgBox");
-        const attrIconEl = document.getElementById("attrIcon");
-        const thumbsEl = document.getElementById("imgThumbs");
-        const statsEl = document.getElementById("statsGrid");
-        const skillsEl = document.getElementById("skillsList");
-        const copyBtn = document.getElementById("copyBtn");
-
-        const escapeHtml = (str) =>
-            String(str)
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-
-        const resolveUrl = (url) => {
-            if (!url) return "";
-            return url.startsWith("/") ? API_BASE + url : url;
-        };
-
-        const renderMarkdown = (md) => {
-            if (!md) return "";
-            let html = escapeHtml(md);
-            html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-            html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
-            html = html.replace(/\n/g, "<br>");
-            return html;
-        };
-
-        const renderTable = (mdText) => {
-            if (!mdText) return "";
-
-            const lines = mdText.split("\n").filter((l) => l.trim());
-            const tableLines = lines.filter((l) => l.trim().startsWith("|") && l.trim().endsWith("|"));
-            if (tableLines.length < 3) return "";
-
-            const splitRow = (line) =>
-                line
-                    .trim()
-                    .slice(1, -1)
-                    .split("|")
-                    .map((c) => c.trim());
-
-            const header = splitRow(tableLines[0]);
-            const rows = tableLines
-                .slice(2)
-                .map(splitRow)
-                .filter((r) => r.some(Boolean));
-
-            if (header.length === 0 || rows.length === 0) return "";
-
-            let html = `<div class="md-table-wrap"><table><thead><tr>`;
-            header.forEach((h) => (html += `<th>${escapeHtml(h)}</th>`));
-            html += `</tr></thead><tbody>`;
-
-            rows.forEach((row) => {
-                html += `<tr>`;
-                row.forEach((cell) => (html += `<td>${renderMarkdown(cell)}</td>`));
-                html += `</tr>`;
+        // Tab Navigation
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+                btn.classList.add("active");
+                document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
             });
+        });
 
-            html += `</tbody></table></div>`;
-            return html;
-        };
-
-        function setMainImage(url, type) {
-            mainImgEl.src = url;
-
-            const isContain = type === "card" || type === "icon" || type === "attribute";
-            mainImgBox.classList.toggle("contain", isContain);
-
-            for (const t of document.querySelectorAll(".thumb")) {
-                t.classList.toggle("active", t.dataset.type === type);
+        // Character Rotation Logic
+        async function getRotationCharacterId() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    if (data.expiresAt > Date.now() && data.characterId) {
+                        return data.characterId;
+                    }
+                } catch (e) { /* ignore */ }
             }
+
+            // Fetch random character
+            const res = await fetch(`${API_BASE}/v1/characters?limit=100`);
+            if (!res.ok) throw new Error("Failed to fetch character list");
+            const json = await res.json();
+            const items = json.items || [];
+            if (items.length === 0) throw new Error("No characters available");
+
+            const randomChar = items[Math.floor(Math.random() * items.length)];
+            const newData = {
+                characterId: randomChar.id,
+                expiresAt: Date.now() + ROTATION_INTERVAL
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+            return randomChar.id;
         }
 
-        async function copyCurl() {
-            const curl = `curl "${API_BASE}/v1/characters/${currentCharacterId}"`;
-            try {
-                await navigator.clipboard.writeText(curl);
-                const original = copyBtn.textContent;
-                copyBtn.textContent = "Copied";
-                setTimeout(() => (copyBtn.textContent = original ?? "Copy curl"), 1500);
-            } catch {
-                // no-op
-            }
+        // Render Functions
+        function renderStars(count) {
+            return "★".repeat(count);
         }
 
-        copyBtn.addEventListener("click", copyCurl);
+        function renderSkillCard(skill) {
+            const type = skill.type || skill.category || "Skill";
+            const desc = skill.descriptionMd || "";
+            // Simple markdown: bold and line breaks
+            const html = desc
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/\n/g, "<br>");
 
-        async function init() {
+            return `
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <h4>${escapeHtml(skill.name || "Unnamed")}</h4>
+                        <span class="skill-type">${escapeHtml(type)}</span>
+                    </div>
+                    <div class="skill-desc">${html}</div>
+                </div>
+            `;
+        }
+
+        function renderStats(statsByLevel) {
+            if (!statsByLevel || Object.keys(statsByLevel).length === 0) {
+                return "<p>No stat data available.</p>";
+            }
+
+            const levels = Object.keys(statsByLevel).sort((a, b) => Number(a) - Number(b));
+            let rows = "";
+            for (const lvl of levels) {
+                const s = statsByLevel[lvl];
+                rows += `
+                    <tr>
+                        <td>Lv. ${lvl}</td>
+                        <td>${s.hp?.toLocaleString() || "-"}</td>
+                        <td>${s.atk?.toLocaleString() || "-"}</td>
+                        <td>${s.def?.toLocaleString() || "-"}</td>
+                    </tr>
+                `;
+            }
+
+            return `
+                <table>
+                    <thead>
+                        <tr><th>Level</th><th>HP</th><th>ATK</th><th>DEF</th></tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        // Main Data Load
+        async function loadCharacter() {
+            loadingState.style.display = "flex";
+            errorState.style.display = "none";
+            characterDisplay.style.display = "none";
+
             try {
-                currentCharacterId = await resolveCharacterId();
-
+                const charId = await getRotationCharacterId();
                 const [charRes, imgRes] = await Promise.all([
-                    fetch(`${API_BASE}/v1/characters/${currentCharacterId}`),
-                    fetch(`${API_BASE}/v1/characters/${currentCharacterId}/images`),
+                    fetch(`${API_BASE}/v1/characters/${charId}`),
+                    fetch(`${API_BASE}/v1/characters/${charId}/images`)
                 ]);
 
-                if (!charRes.ok) throw new Error(`Character request failed: ${charRes.status}`);
-                if (!imgRes.ok) throw new Error(`Images request failed: ${imgRes.status}`);
+                if (!charRes.ok) throw new Error(`Character not found: ${charId}`);
+                const char = await charRes.json();
+                const imgData = imgRes.ok ? await imgRes.json() : { images: [] };
 
-                const charData = await charRes.json();
-                const imgData = await imgRes.json();
+                // Populate Header
+                document.getElementById("charName").textContent = char.name || charId;
+                document.getElementById("charRarity").textContent = renderStars(char.rarity || 0);
+                document.getElementById("charElement").textContent = char.element || "Unknown";
+                document.getElementById("charWeapon").textContent = char.weaponType || "Unknown";
 
-                nameEl.textContent = charData.name ?? currentCharacterId;
-                idEl.textContent = `ID: ${charData.id ?? currentCharacterId}`;
-
-                const pills = [];
-                if (charData.rarity) pills.push({ label: "Rarity", value: "★".repeat(charData.rarity), cls: "gold" });
-                if (charData.element) pills.push({ label: "Element", value: charData.element });
-                if (charData.weaponType) pills.push({ label: "Weapon", value: charData.weaponType });
-
-                pillsEl.innerHTML = pills
-                    .map((p) => {
-                        const cls = p.cls ? ` ${p.cls}` : "";
-                        return `<span class="pill${cls}"><strong>${escapeHtml(p.value)}</strong> ${escapeHtml(p.label)}</span>`;
-                    })
-                    .join("");
-
-                const images = Array.isArray(imgData?.images) ? imgData.images : [];
-                const attrImg = images.find((i) => i.file === "attribute.webp");
-                if (attrImg?.url) {
-                    attrIconEl.src = resolveUrl(attrImg.url);
-                    attrIconEl.style.display = "block";
+                // Attribute Icon
+                const attrIcon = document.getElementById("attrIcon");
+                if (char.images?.attribute) {
+                    attrIcon.src = resolveUrl(char.images.attribute);
+                    attrIcon.style.display = "block";
                 } else {
-                    attrIconEl.style.display = "none";
+                    attrIcon.style.display = "none";
                 }
 
-                const galleryImages = images.filter((i) => i.file !== "attribute.webp");
-
-                thumbsEl.innerHTML = "";
-                for (const img of galleryImages) {
-                    const type = String(img.file ?? "").replace(".webp", "");
-
-                    const btn = document.createElement("button");
-                    btn.type = "button";
-                    btn.className = "thumb";
-                    btn.dataset.type = type;
-                    btn.textContent = type;
-                    btn.addEventListener("click", () => setMainImage(resolveUrl(img.url), type));
-                    thumbsEl.appendChild(btn);
+                // Hero Background
+                const heroBg = document.getElementById("heroBg");
+                if (char.images?.splash) {
+                    heroBg.style.backgroundImage = `url(${resolveUrl(char.images.splash)})`;
                 }
 
-                const defaultOrder = ["splash", "card", "icon"];
-                const pick = (t) => galleryImages.find((i) => i.file === `${t}.webp`);
-                const defaultImg = defaultOrder.map(pick).find(Boolean) ?? galleryImages[0];
-
-                if (defaultImg?.url) {
-                    const defaultType = String(defaultImg.file).replace(".webp", "");
-                    setMainImage(resolveUrl(defaultImg.url), defaultType);
-                }
-
-                const statsByLevel = charData.statsByLevel ?? null;
-                const availableLevels = statsByLevel ? Object.keys(statsByLevel) : [];
-
-                const preferredOrder = ["90", "50", "20"];
-                const levels = [
-                    ...preferredOrder.filter((lvl) => availableLevels.includes(lvl)),
-                    ...availableLevels
-                        .filter((lvl) => !preferredOrder.includes(lvl))
-                        .sort((a, b) => Number(b) - Number(a)),
-                ];
-
-                if (levels.length === 0) {
-                    statsEl.innerHTML = `
-                        <div style="color:var(--text-tertiary); font-size:12px">
-                            Base stats are not available for this character yet.
-                        </div>
-                    `;
+                // API Info
+                document.getElementById("charId").textContent = char.id;
+                document.getElementById("lastUpdated").textContent = char.lastUpdated || "-";
+                const sourceLink = document.getElementById("sourceLink");
+                if (char.source?.prydwen?.url) {
+                    sourceLink.href = char.source.prydwen.url;
+                    sourceLink.textContent = "Prydwen.gg";
+                } else if (char.source?.fandom?.basePage) {
+                    sourceLink.href = char.source.fandom.basePage;
+                    sourceLink.textContent = "Fandom Wiki";
                 } else {
-                    statsEl.innerHTML = levels
-                        .map((lvl) => {
-                            const stat = statsByLevel?.[lvl];
-                            if (!stat) return "";
-
-                            return `
-                                <div class="stat-box">
-                                    <div class="stat-lvl">Lv. ${escapeHtml(lvl)}</div>
-                                    <div class="stat-row"><span>HP</span> <b>${escapeHtml(String(stat.hp ?? ""))}</b></div>
-                                    <div class="stat-row"><span>ATK</span> <b>${escapeHtml(String(stat.atk ?? ""))}</b></div>
-                                    <div class="stat-row"><span>DEF</span> <b>${escapeHtml(String(stat.def ?? ""))}</b></div>
-                                </div>
-                            `;
-                        })
-                        .join("");
+                    sourceLink.style.display = "none";
                 }
 
-                const skills = Array.isArray(charData.skills) ? charData.skills : [];
-                skillsEl.innerHTML = skills
-                    .map((skill, index) => {
-                        const isOpen = index === 0 ? "open" : "";
-                        const type = skill.type ?? skill.category ?? "Skill";
+                document.getElementById("endpointUrl").textContent = `GET /v1/characters/${char.id}`;
 
-                        let scalingHtml = "";
-                        if (skill.scalingMdByRank) {
-                            const r1 = renderTable(skill.scalingMdByRank["1"]);
-                            const r10 = renderTable(skill.scalingMdByRank["10"]);
+                // Image Gallery
+                const images = imgData.images || [];
+                const gallery = document.getElementById("imageGallery");
+                gallery.innerHTML = images.map(img => `
+                    <a href="${resolveUrl(img.url)}" target="_blank" class="gallery-thumb">
+                        <img src="${resolveUrl(img.url)}" alt="${escapeHtml(img.file)}" loading="lazy" />
+                        <span>${escapeHtml(img.file?.replace(".webp", "") || "")}</span>
+                    </a>
+                `).join("");
 
-                            if (r1 || r10) {
-                                const hint = `
-                                    <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px; line-height:1.5">
-                                        Ranks are in-game skill levels. Values like <code style="font-family:var(--font-mono)">33.7%*2</code> indicate hit count.
-                                        The dataset does not currently specify whether a value scales from ATK/HP/DEF.
-                                    </div>
-                                `;
+                // Skills
+                const skills = char.skills || [];
+                document.getElementById("skillsList").innerHTML = skills.length > 0
+                    ? skills.map(renderSkillCard).join("")
+                    : "<p>No skill data available for this character.</p>";
 
-                                scalingHtml = `
-                                    <div class="scaling-section">
-                                        <button type="button" class="scaling-toggle" aria-expanded="false">
-                                            <span>Scaling (skill rank)</span>
-                                            <svg class="scaling-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                                        </button>
-                                        <div class="scaling-body">
-                                            ${hint}
-                                            ${r1 ? `<div style="margin-bottom:12px"><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 1</div>${r1}</div>` : ""}
-                                            ${r10 ? `<div><div style="font-size:11px; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:6px">Rank 10</div>${r10}</div>` : ""}
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        }
+                // Stats
+                document.getElementById("statsTable").innerHTML = renderStats(char.statsByLevel);
 
-                        return `
-                            <div class="skill-item ${isOpen}">
-                                <div class="skill-header" role="button" tabindex="0" aria-expanded="${index === 0 ? "true" : "false"}">
-                                    <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0">
-                                        <h4>${escapeHtml(skill.name ?? "Unnamed")}</h4>
-                                        <span class="skill-type">${escapeHtml(type)}</span>
-                                    </div>
-                                    <svg class="skill-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                                </div>
-                                <div class="skill-body">
-                                    <div class="skill-content">
-                                        <p>${renderMarkdown(skill.descriptionMd)}</p>
-                                        ${scalingHtml}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    })
-                    .join("");
+                // Copy Endpoint
+                document.getElementById("copyEndpoint").onclick = async () => {
+                    const url = `${API_BASE}/v1/characters/${char.id}`;
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        document.getElementById("copyEndpoint").textContent = "Copied!";
+                        setTimeout(() => document.getElementById("copyEndpoint").textContent = "Copy", 1500);
+                    } catch (e) { /* ignore */ }
+                };
 
-                for (const item of skillsEl.querySelectorAll(".skill-item")) {
-                    const header = item.querySelector(".skill-header");
-                    if (!header) continue;
+                // Show content
+                loadingState.style.display = "none";
+                characterDisplay.style.display = "block";
 
-                    const setExpanded = (open) => {
-                        item.classList.toggle("open", open);
-                        header.setAttribute("aria-expanded", open ? "true" : "false");
-                    };
-
-                    header.addEventListener("click", () => setExpanded(!item.classList.contains("open")));
-                    header.addEventListener("keydown", (e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setExpanded(!item.classList.contains("open"));
-                        }
-                    });
-                }
-
-                // Setup scaling table toggles
-                for (const section of skillsEl.querySelectorAll(".scaling-section")) {
-                    const toggle = section.querySelector(".scaling-toggle");
-                    const body = section.querySelector(".scaling-body");
-                    if (!toggle || !body) continue;
-
-                    toggle.addEventListener("click", () => {
-                        const isOpen = section.classList.toggle("open");
-                        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-                    });
-                }
-
-                statusEl.style.display = "none";
-                appEl.style.display = "grid";
             } catch (err) {
-                statusEl.className = "status-panel error-panel";
-                statusEl.innerHTML = `
-                    <h3>Connection Interrupted</h3>
-                    <p style="margin-top:8px">Failed to retrieve data from the API.</p>
-                    <p style="font-size:12px; margin-top:8px; font-family:var(--font-mono)">${escapeHtml(err?.message ?? String(err))}</p>
-                    <button class="btn-small" style="margin:16px auto 0" type="button" id="retryBtn">
-                        <span class="btn-icon" aria-hidden="true"></span>
-                        Retry
-                    </button>
-                `;
-
-                document.getElementById("retryBtn")?.addEventListener("click", () => location.reload());
+                console.error("Load error:", err);
+                loadingState.style.display = "none";
+                errorState.style.display = "flex";
+                document.getElementById("errorMessage").textContent = err.message || "Unknown error";
             }
         }
 
-        init();
+        // Retry button
+        retryBtn.addEventListener("click", () => {
+            localStorage.removeItem(STORAGE_KEY);
+            loadCharacter();
+        });
+
+        // Init
+        loadCharacter();
     </script>
 </body>
 
